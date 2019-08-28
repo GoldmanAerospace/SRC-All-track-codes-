@@ -1003,7 +1003,7 @@ var manageGame = function(game,second) {
 } ;
 
 var changeShip = function (ship) {
-  if (game.custom.status = "qualification" && ship.x > -120 && ship.x < -100 && ship.y > 240 && ship.y < 260) {
+  if (game.custom.status == "qualification" && ship.x > -120 && ship.x < -100 && ship.y > 240 && ship.y < 260) {
     if (ship.type == 106) {
       ship.set({type:101})
     } else {
