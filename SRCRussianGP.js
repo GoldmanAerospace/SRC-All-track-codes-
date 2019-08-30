@@ -34,6 +34,7 @@ game.ships[0].set({x:250,y:-95}); -start
 game.ships[0].set({x:400,y:-160}); -spawn
 */
 
+
 var vocabulary = [
       { text: "Hello", icon:"\u0045", key:"H" },
       { text: "Bye Bye!", icon:"\u0027", key:"B" },
