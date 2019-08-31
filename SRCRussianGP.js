@@ -2,7 +2,7 @@
 // All changes is used, relevant at the time of the weekend on this track
 // Special thanks to Notus, for testing and code review
 
-var qualification_duration = 40 ;
+var qualification_duration = 1900 ;
 var race_laps = 15 ;
 var positions = ["1st","2nd","3rd"] ; // For messages
 var collectibles = 1 ; // Value is not used in any way
@@ -14,15 +14,14 @@ var end = [201,202,203,204,205,206];
 var s = 6;
 var map_size = 100 ;
 
-var sn = "sprint race" ;
+var sp = "sprint race" ;
 var en = "endurance race" ;
+var fp = "free practice";
 
 
 
-
-
-var map_name_type = en; // "sn" or "en"
-var vehicle_type = end; //(end - endurance, spr - sprint)
+var map_name_type = sp; // "sp" or "en"
+var vehicle_type = spr; //(end - endurance, spr - sprint)
 // endurance ships have 2 weapon/booster slots, sprint - only 1
 // sprint ships have better booster speed 
 // choose "end" to unlock weapons 
@@ -33,7 +32,6 @@ var vehicle_type = end; //(end - endurance, spr - sprint)
 game.ships[0].set({x:250,y:-95}); -start
 game.ships[0].set({x:400,y:-160}); -spawn
 */
-
 
 var vocabulary = [
       { text: "Hello", icon:"\u0045", key:"H" },
@@ -131,9 +129,9 @@ var track1 = {
 "99999999999999999999999999999999999999999999999999   L     9999999      9999999999999999    99999999\n"+ //52
 "9999999999999999999999999999999999999999999999999999         999999999999999999999999999    99999999\n"+ //53
 "999999999999999999999999999999999999999999999999999999         9999999999999999999999999DDDD99999999\n"+ //54
-"99999999999999999999999999999999999999999999999999999999     L   999 L     9999999          99999999\n"+ //55
-"9999999999999999999999999999999999999999999999999999999999    M      L        Q             99999999\n"+ //56
-"999999999999999999999999999999999999999999999999999999999999          999999999999999999    99999999\n"+ //57
+"99999999999999999999999999999999999999999999999999999999     L   999 L     9999999     8    99999999\n"+ //55
+"9999999999999999999999999999999999999999999999999999999999    M    88L        Q        8    99999999\n"+ //56
+"999999999999999999999999999999999999999999999999999999999999        88999999999999999999    99999999\n"+ //57
 "999999999999999999999999999999999999999999999999999999999999999         9999999999999999DDDD99999999\n"+ //58
 "99999999999999999999999999999999999999999999999999999999999999999       L  B B B B B B      99999999\n"+ //59
 "9999999999999999999999999999999999999999999999999999999999999999999      I                  99999999\n"+    //60
@@ -178,11 +176,12 @@ var track1 = {
 "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999\n"+ //
 "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999", 
 checkpoints: [
-  {x:229,y:-95,direction:180,width:130}, // Start/ finish line
+  {x:229,y:-95,direction:180,width:70}, // Start/ finish line
   {x:-385,y:28,direction:180,width:100}, // the 1st third end of track (2nd sector beginning)
   {x:-170,y:353,direction:0,width:100} // the 2nd third end of track (3rd sector beginning)
  ]
 } ;
+
 
 var tracks = [track1] ;
 var current_track = 0 ;
@@ -335,8 +334,8 @@ game.setObject({
 var TrackInfo = {
   id: "TrackInfo",
   obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
-  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/abouttrack.png",
-  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/abouttrack.png"
+  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/abouttrackRUS.png",
+  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/abouttrackRUS.png"
 } ;
 
 game.setObject({
