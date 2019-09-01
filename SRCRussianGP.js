@@ -2,8 +2,8 @@
 // All changes is used, relevant at the time of the weekend on this track
 // Special thanks to Notus, for testing and code review
 
-var qualification_duration = 1900 ;
-var race_laps = 15 ;
+var qualification_duration = 1000 ;
+var race_laps = 18 ;
 var positions = ["1st","2nd","3rd"] ; // For messages
 var collectibles = 1 ; // Value is not used in any way
 var time_after_race = 120 ;
@@ -20,8 +20,8 @@ var fp = "free practice";
 
 
 
-var map_name_type = sp; // "sp" or "en"
-var vehicle_type = spr; //(end - endurance, spr - sprint)
+var map_name_type = en; // "sp" or "en"
+var vehicle_type = end; //(end - endurance, spr - sprint)
 // endurance ships have 2 weapon/booster slots, sprint - only 1
 // sprint ships have better booster speed 
 // choose "end" to unlock weapons 
@@ -92,8 +92,8 @@ var track1 = {
 "9999999999999999999999999      R        999999999999999999999999999999999999999999999999999999999999\n"+ //15
 "9999999999999999999999999      R         99999999999999999999999999999999999999999999999999999999999\n"+ //16
 "9999999999999999999999999   9999999       9999999999999999999999999999999999999999999999999999999999\n"+ //17
-"9999999999999999999999999   999999999       99999999999999999999999999999999999999999999999999999999\n"+ //18
-"999999999999999999999999UUUU99999999999      9999999999999999999999999999999999999999999999999999999\n"+ //19
+"9999999999999999999999999   9  999999       99999999999999999999999999999999999999999999999999999999\n"+ //18
+"999999999999999999999999UUUU9  99999999      9999999999999999999999999999999999999999999999999999999\n"+ //19
 "9999999999999999999999     9999999999999  DDD  99999999999999999999999999999999999999999999999999999\n"+    //20
 "99999999999999999999      9999999999999999       999999999999999999999999999999999999999999999999999\n"+ //21
 "999999999999999999      99999999999999999999       9999999999999999999999999999999999999999999999999\n"+ //22
@@ -115,10 +115,10 @@ var track1 = {
 "9    9999999999     999999999999999999999999999     9999     999999999999999999999999999999999999999\n"+ //38
 "9    9999999999     999999999999999999999999999     9999     999999999999999999999999999999999999999\n"+ //39
 "9    9999999999     999999999999999999999999999 UUU 9999     999999999999999999999999999999999999999\n"+    //40
-"9    99999999999    999999999999999999999999999    99999     999999999999999999999999999999999999999\n"+ //41
-"9    99999999999     99999999999999999999999999    99999     999999999999999999999999999999999999999\n"+ //42
-"9UUUU999999999999DDDD99999999999999999999999999    99999     999999999999999999999999999999999999999\n"+ //43
-"9    999999999999    9999999999999999999999999    999999  D  999999999999999999999999999999999999999\n"+ //44
+"9    999999999 9    999999999999999999999999999    99999     999999999999999999999999999999999999999\n"+ //41
+"9    999999999 9     99999999999999999999999999    99999     999999999999999999999999999999999999999\n"+ //42
+"9UUUU999999999  9DDDD99999999999999999999999999    99999     999999999999999999999999999999999999999\n"+ //43
+"9    999999999  9    9999999999999999999999999    999999  D  999999999999999999999999999999999999999\n"+ //44
 "9    999999999999    9999999999999999999999999    999999  H  999999999         R           999999999\n"+ //45
 "9          L         9999999999999999999999999    999999     99999999          R            99999999\n"+ //46
 "9          L         9999999999999999999999999    999999       999999          R            99999999\n"+ //47
@@ -129,9 +129,9 @@ var track1 = {
 "99999999999999999999999999999999999999999999999999   L     9999999      9999999999999999    99999999\n"+ //52
 "9999999999999999999999999999999999999999999999999999         999999999999999999999999999    99999999\n"+ //53
 "999999999999999999999999999999999999999999999999999999         9999999999999999999999999DDDD99999999\n"+ //54
-"99999999999999999999999999999999999999999999999999999999     L   999 L     9999999     8    99999999\n"+ //55
-"9999999999999999999999999999999999999999999999999999999999    M    88L        Q        8    99999999\n"+ //56
-"999999999999999999999999999999999999999999999999999999999999        88999999999999999999    99999999\n"+ //57
+"99999999999999999999999999999999999999999999999999999999     L   999 L     9999999          99999999\n"+ //55
+"9999999999999999999999999999999999999999999999999999999999    M      L        Q             99999999\n"+ //56
+"999999999999999999999999999999999999999999999999999999999999          999999999999999999    99999999\n"+ //57
 "999999999999999999999999999999999999999999999999999999999999999         9999999999999999DDDD99999999\n"+ //58
 "99999999999999999999999999999999999999999999999999999999999999999       L  B B B B B B      99999999\n"+ //59
 "9999999999999999999999999999999999999999999999999999999999999999999      I                  99999999\n"+    //60
@@ -198,6 +198,102 @@ var setTrack = function(game,trackid) {
   game.removeObject() ;
   addObjects(game) ;
   game.setCustomMap(map);
+}
+
+var cube = {
+  id: "cube",
+  obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
+  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseBigcube.png",
+  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseBigcube.png",
+//  bump: "https://starblast.data.neuronality.com/mods/objects/cube/bump.jpg",
+//  emissiveColor: 0xFF0008,
+//  specularColor: 0x805010,
+//  diffuseColor:0xFFFFFF,
+  transparent: true,
+  physics: {
+    mass: 250,
+    shape: [2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.308,3.048,2.878,2.759,2.697,2.697,2.759,2.878,3.048,3.308,3.672,3.678,3.474,3.169,2.958,2.806,2.723,2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.307,3.054,2.878,2.761,2.698,2.698,2.761,2.878,3.054,3.307,3.672,3.678,3.474,3.169,2.958,2.806,2.723],
+    fixed: true
+  }
+} ;
+
+for (var i=0;i<1;i++)
+{
+  for (var j=0;j<1;j++)
+  {
+  game.setObject({
+    id:"cube",
+    type:cube,
+    position:{x:-350,y:69,z:-2},
+    scale:{x:4.5,y:4.5,z:1.6},
+    rotation: {x:-0.1,y:0,z:1.57*3}
+  }) ;
+
+  }
+}
+
+var cube2 = {
+  id: "cube2",
+  obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
+  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseSmallcube.png",
+  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseSmallcube.png",
+//  bump: "https://starblast.data.neuronality.com/mods/objects/cube/bump.jpg",
+//  emissiveColor: 0xFF0008,
+//  specularColor: 0x805010,
+//  diffuseColor:0xFFFFFF,
+  transparent: true,
+  physics: {
+    mass: 250,
+    shape: [2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.308,3.048,2.878,2.759,2.697,2.697,2.759,2.878,3.048,3.308,3.672,3.678,3.474,3.169,2.958,2.806,2.723,2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.307,3.054,2.878,2.761,2.698,2.698,2.761,2.878,3.054,3.307,3.672,3.678,3.474,3.169,2.958,2.806,2.723],
+    fixed: true
+  }
+} ;
+
+for (var i=0;i<1;i++)
+{
+  for (var j=0;j<1;j++)
+  {
+  game.setObject({
+    id:"cube2",
+    type:cube2,
+    position:{x:-354,y:89.5,z:-2},
+    scale:{x:2.5,y:2.6,z:1.2},
+    rotation: {x:3.14,y:0,z:0}
+  }) ;
+
+  }
+}
+
+var cube3 = {
+  id: "cube3",
+  obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
+  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseBigcube.png",
+  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseBigcube.png",
+//  bump: "https://starblast.data.neuronality.com/mods/objects/cube/bump.jpg",
+//  emissiveColor: 0xFF0008,
+//  specularColor: 0x805010,
+//  diffuseColor:0xFFFFFF,
+  transparent: true,
+  physics: {
+    mass: 250,
+    shape: [2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.308,3.048,2.878,2.759,2.697,2.697,2.759,2.878,3.048,3.308,3.672,3.678,3.474,3.169,2.958,2.806,2.723,2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.307,3.054,2.878,2.761,2.698,2.698,2.761,2.878,3.054,3.307,3.672,3.678,3.474,3.169,2.958,2.806,2.723],
+    fixed: true
+  }
+} ;
+
+for (var i=0;i<1;i++)
+{
+  for (var j=0;j<1;j++)
+  {
+  game.setObject({
+    id:"cube3",
+    type:cube,
+    position:{x:-201,y:322,z:-2},
+    scale:{x:4.5,y:4.5,z:1.6},
+    rotation: {x:0,y:0,z:1.57*3}
+  }) ;
+
+  }
 }
 
 var scoreboard = {
@@ -576,11 +672,11 @@ addObjects(game);
 this.options = {
   map_size: 100,
   weapons_store: false,
-  radar_zoom: 1.25,
+  radar_zoom: 1,
   crystal_value: 0,
   ships: [Booster_101,Astral_Accelerator_102,V1_103,RAD_Diamond_Lancer_104,Vengar_105,Space_Phantom_106,Booster_201,Astral_Accelerator_202,V1_203,RAD_Diamond_Lancer_204,Vengar_205,Space_Phantom_206],
   choose_ship: vehicle_type,
-  asteroids_strength: 105,
+  asteroids_strength: 6,
   starting_ship: 101,
   auto_refill: false,
   map_name: "3rd SRC track/"+map_name_type,
