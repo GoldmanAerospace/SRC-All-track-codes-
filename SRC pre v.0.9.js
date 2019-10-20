@@ -33,12 +33,18 @@ var SpawnX = -280; var SpawnY = -320; var StartX = -215; var StartY = -195;
 game.ships[0].set({x:250,y:-95}); -start
 game.ships[0].set({x:400,y:-160}); -spawn
 
-game.ships[0].gameover({"Rating":"Kick!","Score":0}) 
+game.ships[0].gameover({"Rating":"Kick!","Score":0})
 
 S2 : 155,-115
 S3 : 65, -335
-*/
+*/ 
 
+var Sector1X = StartX; var Sector1Y = StartY+35;
+var Sector2X = 155; var Sector2Y = -115;
+var Sector3X = 60;  var Sector3Y = -355;
+
+var Wx = -160;
+var Wy = -255;
 
 // AFK settings
 var afk_timeout = 30;
@@ -175,8 +181,8 @@ var track1 = {
 "99999999999999999999999999999999999999999999999999999999999999999999999999999999",     //80
 checkpoints: [
   {x:StartX,y:StartY,direction:90,width:90}, // Start/ finish line
-  {x:155,y:-95,direction:0,width:80}, // the 1st third end of track (2nd sector beginning)
-  {x:65,y:-335,direction:180,width:100} // the 2nd third end of track (3rd sector beginning)
+  {x:Sector2X,y:Sector2Y,direction:0,width:80}, // the 1st third end of track (2nd sector beginning)
+  {x:Sector3X,y:Sector3Y,direction:180,width:100} // the 2nd third end of track (3rd sector beginning)
  ]
 } ;
 
@@ -198,101 +204,6 @@ var setTrack = function(game,trackid) {
   game.setCustomMap(map);
 }
 
-var cube = {
-  id: "cube",
-  obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
-  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseBigcube.png",
-  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseBigcube.png",
-//  bump: "https://starblast.data.neuronality.com/mods/objects/cube/bump.jpg",
-//  emissiveColor: 0xFF0008,
-//  specularColor: 0x805010,
-//  diffuseColor:0xFFFFFF,
-  transparent: true,
-  physics: {
-    mass: 250,
-    shape: [2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.308,3.048,2.878,2.759,2.697,2.697,2.759,2.878,3.048,3.308,3.672,3.678,3.474,3.169,2.958,2.806,2.723,2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.307,3.054,2.878,2.761,2.698,2.698,2.761,2.878,3.054,3.307,3.672,3.678,3.474,3.169,2.958,2.806,2.723],
-    fixed: true
-  }
-} ;
-
-for (var i=0;i<1;i++)
-{
-  for (var j=0;j<1;j++)
-  {
-  game.setObject({
-    id:"cube",
-    type:cube,
-    position:{x:-350,y:69,z:-2},
-    scale:{x:4.5,y:4.5,z:1.6},
-    rotation: {x:0,y:0,z:1.57*3}
-  }) ;
-
-  }
-}
-
-var cube2 = {
-  id: "cube2",
-  obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
-  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseSmallcube.png",
-  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseSmallcube.png",
-//  bump: "https://starblast.data.neuronality.com/mods/objects/cube/bump.jpg",
-//  emissiveColor: 0xFF0008,
-//  specularColor: 0x805010,
-//  diffuseColor:0xFFFFFF,
-  transparent: true,
-  physics: {
-    mass: 250,
-    shape: [2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.308,3.048,2.878,2.759,2.697,2.697,2.759,2.878,3.048,3.308,3.672,3.678,3.474,3.169,2.958,2.806,2.723,2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.307,3.054,2.878,2.761,2.698,2.698,2.761,2.878,3.054,3.307,3.672,3.678,3.474,3.169,2.958,2.806,2.723],
-    fixed: true
-  }
-} ;
-
-for (var i=0;i<1;i++)
-{
-  for (var j=0;j<1;j++)
-  {
-  game.setObject({
-    id:"cube2",
-    type:cube2,
-    position:{x:-354,y:89.5,z:-2},
-    scale:{x:2.5,y:2.6,z:1.2},
-    rotation: {x:3.14,y:0,z:0}
-  }) ;
-
-  }
-}
-
-var cube3 = {
-  id: "cube3",
-  obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
-  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseBigcube.png",
-  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/diffuseBigcube.png",
-//  bump: "https://starblast.data.neuronality.com/mods/objects/cube/bump.jpg",
-//  emissiveColor: 0xFF0008,
-//  specularColor: 0x805010,
-//  diffuseColor:0xFFFFFF,
-  transparent: true,
-  physics: {
-    mass: 250,
-    shape: [2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.308,3.048,2.878,2.759,2.697,2.697,2.759,2.878,3.048,3.308,3.672,3.678,3.474,3.169,2.958,2.806,2.723,2.682,2.723,2.806,2.958,3.169,3.474,3.678,3.672,3.307,3.054,2.878,2.761,2.698,2.698,2.761,2.878,3.054,3.307,3.672,3.678,3.474,3.169,2.958,2.806,2.723],
-    fixed: true
-  }
-} ;
-
-for (var i=0;i<1;i++)
-{
-  for (var j=0;j<1;j++)
-  {
-  game.setObject({
-    id:"cube3",
-    type:cube,
-    position:{x:-201,y:322,z:-2},
-    scale:{x:4.5,y:4.5,z:1.6},
-    rotation: {x:0,y:0,z:1.57*3}
-  }) ;
-
-  }
-}
 
 var scoreboard = {
   id:"scoreboard",
@@ -441,53 +352,27 @@ game.setObject({
 }) ;
 
 
-var RacingLogo = {
-  id: "RacingLogo",
+
+var SRCLogo = {
+  id: "SRCLogo",
   obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
   diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/RacingLOGO.png",
   emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/RacingLOGO.png"
 } ;
 
-game.setObject({
-  id: "RacingLogo",
-  type: RacingLogo,
-  position: {x:StartX,y:StartY+35,z:-2.5},
-  scale: {x:25,y:25,z:36},
-  rotation: {x:600,y:0,z:0}
-}) ;
+var addSRCLogo = function(x,y) {
+  game.setObject({
+    id: "SRCLogo"+x+y,
+    type: SRCLogo,
+    position: {x:x,y:y,z:-2.5},
+    scale: {x:25,y:25,z:36},
+    rotation: {x:600,y:0,z:0}
+  }) ;
+};
 
-
-var RacingLogoSector2 = {
-  id: "RacingLogoSector2",
-  obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
-  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/RacingLOGO.png",
-  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/RacingLOGO.png"
-} ;
-
-game.setObject({
-  id: "RacingLogoSector2",
-  type: RacingLogo,
-  position: {x:155,y:-115,z:-2.5},
-  scale: {x:25,y:25,z:36},
-  rotation: {x:600,y:0,z:0}
-}) ;
-
-var RacingLogoSector3 = {
-  id: "RacingLogoSector3",
-  obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
-  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/RacingLOGO.png",
-  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/RacingLOGO.png"
-} ;
-
-game.setObject({
-  id: "RacingLogoSector3", // start of sector 3
-  type: RacingLogoSector3,
-  position: {x:50,y:-355,z:-2.5},
-  scale: {x:25,y:25,z:36},
-  rotation: {x:600,y:0,z:0}
-}) ;
-
-
+addSRCLogo(Sector1X,Sector1Y);
+addSRCLogo(Sector2X,Sector2Y);
+addSRCLogo(Sector3X,Sector3Y);
 
 var SpawnAndSwitch = {
   id: "SpawnAndSwitch",
@@ -503,41 +388,6 @@ game.setObject({
   scale: {x:20,y:20,z:36},
   rotation: {x:600,y:0,z:0}
 }) ;
-
-/*
-Bad trying:P
-var brick = {
-  id: "brick",
-  obj: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/brick.obj",
-  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/block.png",
-  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/block.png",
-  bump: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/block.png",
-  shininess: 0,
-  emissiveColor: 0x00CCFF,
-  specularColor: 0x4080FF,
-  transparent: false,
-  bumpScale: 1,
-  physics: {
-    mass: 350,
-    shape: [1.475,1.495,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.624,0.684,0.77,0.877,0.865,0.795,0.75,0.721,0.705,0.705,0.721,0.751,0.799,0.862,0.96,1.096,1.305,1.63,1.626,1.545,1.498],
-    fixed: true
-  }
-} ;
-for (var i=0;i<1;i++)
-{
-  for (var j=0;j<1;j++)
-  {
-  game.setObject({
-    id:"brick",
-    type:brick,
-    position:{x:-377,y:269,z:-4},
-    scale:{x:8.5,y:8.5,z:8.5},
-    rotation: {x:90,y:0,z:0},
-    bumpScale: 1
-  }) ;
-  }
-}
-*/
 
 
 
@@ -1453,12 +1303,9 @@ this.tick = function(game) {
     game.addCollectible({code:90,x:110,y:-355});
     game.addCollectible({code:90,x:95,y:-355});
     game.addCollectible({code:90,x:80,y:-355});
-    game.addCollectible({code:90,x:65,y:-355});
   } 
   // PitLane
  
-  var Wx = -160;
-  var Wy = -255;
   
   if (vehicle_type != spr && game.custom.status != "qualification") {
     if (game.step%1350 == 0) {  
