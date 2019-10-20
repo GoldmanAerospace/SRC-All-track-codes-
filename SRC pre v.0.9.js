@@ -2,7 +2,7 @@
 // All changes is used, relevant at the time of the weekend on this track
 // Special thanks to Notus, for testing and code review
 
-var qualification_duration = 500 ;
+var qualification_duration = 500;
 var race_laps = 16;
 var positions = ["1st","2nd","3rd"] ; // For messages
 var collectibles = 1 ; // Value is not used in any way
@@ -17,7 +17,6 @@ var map_size = 80 ;
 var sp = "sprint race" ;
 var en = "endurance race" ;
 var fp = "free practice";
-
 
 
 var map_name_type = en; // "sp" or "en"
@@ -39,6 +38,14 @@ game.ships[0].gameover({"Rating":"Kick!","Score":0})
 S2 : 155,-115
 S3 : 65, -335
 */
+
+
+// AFK settings
+var afk_timeout = 30;
+var afk_speed = 0.25;
+var afk_action = function (ship) {
+  ship.set({x:SpawnX,y:SpawnY,vx:0,vy:0});
+};
 
 var vocabulary = [
       { text: "Hello", icon:"\u0045", key:"H" },
@@ -720,34 +727,70 @@ var formatMinutesSeconds = function(time) {
  return minutes+":"+seconds ;
 }
 
+// Disable debug output (tick time & data sent)
 
-// Global instructor:
+game.modding.tick = function(t) {
+  this.game.tick(t);
+  if (this.context.tick != null) {
+    this.context.tick(this.game);
+  }
+};
 
-instructor = function(message, time = 15, character = "Lucina", ship_action = null, timeout_ship_action = null) {
+// Color terminal output
+
+function error(message) {
+  game.modding.terminal.error(message);
+}
+
+function color_message(message, color, style) {
+  if (!color) {
+    color = "";
+  }
+  if (!style) {
+    style = "";
+  }
+  return `[[${style};${color};]${message}]`;
+}
+
+function color_echo(message, color, style) {
+  echo(color_message(message, color, style));
+}
+
+function color_name(index, name, color) {
+  return color_message(index, color, "b") + color_message(" | ", color) + color_message(name, color, "b");
+}
+
+function color_echo_with_name(message, index, name, color) {
+  echo(color_message(message + " ", color) + color_name(index, name, color));
+}
+
+// Global instructor
+
+instructor = function(message, time = 15, character = "Lucina", cancel_old_action = false, timeout_action = null) {
   clearTimeout(game.custom.instructor_timer);
   for (var ship of game.ships) {
     clearTimeout(ship.custom.instructor_timer);
     ship.custom.instructor_timer = 0;
     ship.instructorSays(message, character);
-    if (ship_action) {
-      ship_action(ship);
-    }
   }
   game.custom.instructor_timer = setTimeout(function() {
     for (var ship of game.ships) {
       if (!ship.custom.instructor_timer) {
         ship.hideInstructor();
       }
-      if (timeout_ship_action) {
-        timeout_ship_action(ship);
-      }
     }
   }, time * 1000);
+  if (cancel_old_action) {
+    clearTimeout(game.custom.instructor_action_timer);
+  }
+  if (typeof timeout_action == "function") {
+    game.custom.instructor_action_timer = setTimeout(timeout_action, time * 1000);
+  }
 };
 
-var lapRecordAnnounce = function(lap_time, player) {
+function lapRecordAnnounce(lap_time, player) {
   instructor(`\nNew lap record!\n\n${lap_time} - ${player}\n\n`, 10, "Kan");
-};
+}
 
 //FIA!
 warn = function(ship_number, rule, time = 25, character = "Zoltar") {
@@ -763,12 +806,12 @@ warn = function(ship_number, rule, time = 25, character = "Zoltar") {
   } else if (rule == 5) {
     message = "\n \n Warning! (rule 5) \n Trolling! Continue - instant kick!"
   } else {
-    echo("Error: unknown rule number (should be 1 to 5)");
+    error("Error: unknown rule number (should be 1 to 5)");
     return;
   }
   var ship = game.ships[ship_number-1];
   if (ship == null) {
-    echo("Error: ship " + ship_number + " not found");
+    error("Error: ship " + ship_number + " not found");
     return;
   }
   clearTimeout(ship.custom.instructor_timer);
@@ -799,24 +842,80 @@ flag = function(flag) {
     character = "Maria";
     idle = true;
   } else {
-    echo("Error: unknown flag");
+    error("Error: unknown flag");
     return;
   }
-  var reset_ship = function(ship) {
-    ship.set({idle:false});
-  };
+  function idle_ships() {
+    if (!game.custom.ships_idle) {
+      game.custom.ships_idle = true;
+      for (var ship of game.ships) {
+        ship.set({idle:true,vx:0,vy:0});
+        if (ship.custom.afk_timer) {
+          clearTimeout(ship.custom.afk_timer);
+          ship.custom.afk_timer = 0;
+        }
+        ship.custom.afk = false;
+      }
+      color_echo("Ships are idle\nAFK check disabled", "Gold");
+    }
+  }
+  function reset_ships() {
+    if (game.custom.ships_idle) {
+      game.custom.ships_idle = false;
+      for (var ship of game.ships) {
+        ship.set({idle:false});
+      }
+      color_echo("Ships are no longer idle\nAFK check enabled", "Lime");
+    }
+  }
   if (idle) {
-    var idle_ship = function(ship) {
-      ship.set({idle:true,vx:0,vy:0});
-    };
-    instructor(message, time, character, idle_ship, reset_ship);
+    idle_ships();
+    instructor(message, time, character, true, reset_ships);
   } else {
-    instructor(message, time, character, reset_ship);
+    reset_ships();
+    instructor(message, time, character, true);
   }
 };
 
-var checkShip = function(ship) { 
-  
+kick = function(ship_number) {
+  var ship = game.ships[ship_number-1];
+  if (ship == null) {
+    error("Error: ship " + ship_number + " not found");
+    return;
+  }
+  function space(num) {
+    return " \u2063".repeat(num);
+  }
+  ship.gameover({"":"Kick!" + space(46), " ":"You were kicked because violated game rules" + space(7)});
+};
+
+
+var checkShip = function(ship, index) {
+  function bind_afk(ship) {
+    return function() {
+      ship.custom.afk = true;
+      afk_action(ship);
+      color_echo_with_name("AFK:", index + 1, ship.name, "DarkOrange")
+    };
+  }
+
+  if (!game.custom.ships_idle) {
+    if (ship.alive && Math.sqrt(Math.pow(ship.vx, 2) + Math.pow(ship.vy, 2)) < afk_speed) {
+      if (!ship.custom.afk_timer) {
+        ship.custom.afk_timer = setTimeout(bind_afk(ship), afk_timeout * 1000);
+      }
+    } else {
+      if (ship.custom.afk_timer) {
+        clearTimeout(ship.custom.afk_timer);
+        ship.custom.afk_timer = 0;
+      }
+      if (ship.custom.afk) {
+        ship.custom.afk = false;
+        color_echo_with_name("No longer AFK:", index + 1, ship.name, "LimeGreen")
+      }
+    }
+  }
+
   if (map_name_type == sp) {
     if (!ship.custom.instructor_hidden) {
       if (!ship.custom.instructor_said) {
@@ -844,7 +943,7 @@ var checkShip = function(ship) {
       if (!ship.custom.instructor_said) {
         ship.custom.instructor_said = true;
         ship.custom.instructor_hide_step = game.step + 1200;
-        ship.instructorSays("It's free practice. The test of the track. You can study the track, but don’t forget about the simple rules! (Without trolling, the Zoltar from FIA is still watching you!) Good luck!\n", "Lucina");
+        ship.instructorSays("It's free practice. The test of the track. You can study the track, but don't forget about the simple rules! (Without trolling, the Zoltar from FIA is still watching you!) Good luck!\n", "Lucina");
       } else if (game.step >= ship.custom.instructor_hide_step) {
         ship.custom.instructor_hidden = true;
         ship.hideInstructor();
@@ -1318,21 +1417,7 @@ var startRace = function(game) {
   game.custom.lap_record = null;
 }
 
-this.tick = function(game,ship) {
-  for (var i=0;i<game.ships.length;i++) {
-    var ship = game.ships[i];
-    if (ship.vx < 1 && ship.vy < 1) {   
-      var sec = 0
-      if (game.step%60 == 0) {
-        sec++;
-      }
-      if (sec == 5) {
-        ship.set({x:0,y:0,vx:0,vy:0});
-      }
-    }
-  }
-
-  
+this.tick = function(game) {
   if (game.collectibles.length<collectibles)
   {
     popCollectible(game);
@@ -1340,7 +1425,7 @@ this.tick = function(game,ship) {
   for (var i=0;i<game.ships.length;i++)
   {
     var ship = game.ships[i];
-    checkShip(ship);
+    checkShip(ship, i);
   }
   if (game.step%60 == 0)
   {
@@ -1354,7 +1439,6 @@ this.tick = function(game,ship) {
       updateShipInfo(ship,game);
     }
   }
-  
   //Collectibles
   
   if (game.step%605 == 0) {
