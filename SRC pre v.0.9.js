@@ -8,10 +8,12 @@ var positions = ["1st","2nd","3rd"] ; // For messages
 var collectibles = 1 ; // Value is not used in any way
 var time_after_race = 50 ;
 
+var race_start_delay = 11;
+var race_start_timer = 3;
+
 var spr = [101,102,103,104,105,106];
 var end = [201,202,203,204,205,206];
 
-var s = 6;
 var map_size = 100 ;
 
 var sp = "sprint race" ;
@@ -26,7 +28,8 @@ var vehicle_type = end; //(end - endurance, spr - sprint)
 // choose "end" to unlock weapons 
 // Welcome message depends on the selected
 
-
+var enable_drs_on_race_lap = 3;
+var enable_pitlane = vehicle_type != spr;
 
 var SpawnX = 160; var SpawnY = -100; var StartX = 330; var StartY = 5;
 /*
@@ -51,6 +54,15 @@ var afk_timeout = 30;
 var afk_speed = 0.25;
 var afk_action = function (ship) {
   ship.set({x:SpawnX,y:SpawnY,vx:0,vy:0});
+};
+
+var troll_timeout = 45;
+var troll_afk_timeout = afk_timeout / 2;
+
+var welcome_message = {
+  [sp]: "\nToday is sprint race. Short distance, powerful boosters, closed pit lane, and only 1 booster slot. Intense race and important qualification position. Good luck!",
+  [en]: "Today is endurance race. Long distance. Position in qualification is not so important. Weaker boosters, but 2 weapon/booster slots, and an open pitlane with mines and missiles in the race. Good luck!",
+  [fp]: "\nIt's free practice. The test of the track. You can study the track, but don't forget about the simple rules! (Without trolling, the Zoltar from FIA is still watching you!) Good luck!",
 };
 
 var vocabulary = [
@@ -634,6 +646,56 @@ function color_echo_with_name(message, index, name, color) {
   echo(color_message(message + " ", color) + color_name(index, name, color));
 }
 
+// AFK check
+
+afk_check = {
+  disable: function(with_idle = false) {
+    this.state = false;
+    for (var ship of game.ships) {
+      ship.custom.afk_init_step = 0;
+      ship.custom.afk = false;
+    }
+    var message = "AFK check disabled";
+    if (with_idle) {
+      message = "Ships are idle\n" + message;
+    }
+    color_echo(message, "Gold");
+  },
+  enable: function(with_idle = false) {
+    this.state = true;
+    var message = "AFK check enabled";
+    if (with_idle) {
+      message = "Ships are no longer idle\n" + message;
+    }
+    color_echo(message, "Lime");
+  },
+  check: function(ship, index) {
+    if (this.state) {
+      if (ship.alive && Math.sqrt(Math.pow(ship.vx, 2) + Math.pow(ship.vy, 2)) < afk_speed) {
+        if (!ship.custom.afk) {
+          if (!ship.custom.afk_init_step) {
+            ship.custom.afk_init_step = game.step;
+          } else {
+            ship.custom.afk_seconds = (game.step - ship.custom.afk_init_step) / 60;
+            if (ship.custom.afk_seconds >= afk_timeout) {
+              ship.custom.afk = true;
+              color_echo_with_name("AFK:", index + 1, ship.name, "DarkOrange");
+              afk_action(ship);
+            }
+          }
+        }
+      } else {
+        ship.custom.afk_init_step = 0;
+        if (ship.custom.afk) {
+          ship.custom.afk = false;
+          color_echo_with_name("No longer AFK:", index + 1, ship.name, "LimeGreen");
+        }
+      }
+    }
+  },
+  state: true,
+};
+
 // Global instructor
 
 instructor = function(message, time = 15, character = "Lucina", cancel_old_action = false, timeout_action = null) {
@@ -716,27 +778,16 @@ flag = function(flag) {
     return;
   }
   function idle_ships() {
-    if (!game.custom.ships_idle) {
-      game.custom.ships_idle = true;
-      for (var ship of game.ships) {
-        ship.set({idle:true,vx:0,vy:0});
-        if (ship.custom.afk_timer) {
-          clearTimeout(ship.custom.afk_timer);
-          ship.custom.afk_timer = 0;
-        }
-        ship.custom.afk = false;
-      }
-      color_echo("Ships are idle\nAFK check disabled", "Gold");
+    for (var ship of game.ships) {
+      ship.set({idle:true,vx:0,vy:0});
     }
+    afk_check.disable(true);
   }
   function reset_ships() {
-    if (game.custom.ships_idle) {
-      game.custom.ships_idle = false;
-      for (var ship of game.ships) {
-        ship.set({idle:false});
-      }
-      color_echo("Ships are no longer idle\nAFK check enabled", "Lime");
+    for (var ship of game.ships) {
+      ship.set({idle:false});
     }
+    afk_check.enable(true);
   }
   if (idle) {
     idle_ships();
@@ -761,65 +812,23 @@ kick = function(ship_number) {
 
 
 var checkShip = function(ship, index) {
-  function bind_afk(ship) {
-    return function() {
-      ship.custom.afk = true;
-      afk_action(ship);
-      color_echo_with_name("AFK:", index + 1, ship.name, "DarkOrange")
-    };
+  if (!ship.custom.init && ship.alive) {
+    ship.custom.init = true;
+    spawnShip(ship);
   }
 
-  if (!game.custom.ships_idle) {
-    if (ship.alive && Math.sqrt(Math.pow(ship.vx, 2) + Math.pow(ship.vy, 2)) < afk_speed) {
-      if (!ship.custom.afk_timer) {
-        ship.custom.afk_timer = setTimeout(bind_afk(ship), afk_timeout * 1000);
-      }
-    } else {
-      if (ship.custom.afk_timer) {
-        clearTimeout(ship.custom.afk_timer);
-        ship.custom.afk_timer = 0;
-      }
-      if (ship.custom.afk) {
-        ship.custom.afk = false;
-        color_echo_with_name("No longer AFK:", index + 1, ship.name, "LimeGreen")
-      }
-    }
+  if (!ship.custom.instructor_hidden) {
+    if (!ship.custom.instructor_said) {
+      ship.custom.instructor_said = true;
+      ship.custom.instructor_hide_step = game.step + 1200;
+      ship.instructorSays(welcome_message[map_name_type], "Lucina");
+    } else if (game.step >= ship.custom.instructor_hide_step) {
+      ship.custom.instructor_hidden = true;
+      ship.hideInstructor();
+    }           
   }
 
-  if (map_name_type == sp) {
-    if (!ship.custom.instructor_hidden) {
-      if (!ship.custom.instructor_said) {
-        ship.custom.instructor_said = true;
-        ship.custom.instructor_hide_step = game.step + 1200;
-        ship.instructorSays("Today is sprint race. Short distance, powerful boosters, closed pit lane, and only 1 booster slot. Intense race and important qualification position. Good luck!\n \n", "Lucina");
-      } else if (game.step >= ship.custom.instructor_hide_step) {
-        ship.custom.instructor_hidden = true;
-        ship.hideInstructor();
-      }           
-    }  
-  } else if (map_name_type == en) {
-    if (!ship.custom.instructor_hidden) {
-      if (!ship.custom.instructor_said) {
-        ship.custom.instructor_said = true;
-        ship.custom.instructor_hide_step = game.step + 1200;
-        ship.instructorSays("Today is endurance race. Long distance. Position in qualification is not so important. Weaker boosters, but 2 weapon/booster slots, and an open pitlane with mines and missiles in the race. Good luck!\n \n", "Lucina");
-      } else if (game.step >= ship.custom.instructor_hide_step) {
-        ship.custom.instructor_hidden = true;
-        ship.hideInstructor();
-      }           
-    }  
-  } else if (map_name_type == fp) {
-    if (!ship.custom.instructor_hidden) {
-      if (!ship.custom.instructor_said) {
-        ship.custom.instructor_said = true;
-        ship.custom.instructor_hide_step = game.step + 1200;
-        ship.instructorSays("It's free practice. The test of the track. You can study the track, but don't forget about the simple rules! (Without trolling, the Zoltar from FIA is still watching you!) Good luck!\n", "Lucina");
-      } else if (game.step >= ship.custom.instructor_hide_step) {
-        ship.custom.instructor_hidden = true;
-        ship.hideInstructor();
-      }           
-    }  
-  }
+  afk_check.check(ship, index);
   
   if (ship.custom.current_checkpoint == null)
   {
@@ -860,6 +869,9 @@ var checkShip = function(ship, index) {
     if (ship.custom.current_checkpoint == 0)
     {
       ship.custom.lap_count++ ;
+      if (!game.custom.enable_drs && ship.custom.lap_count == enable_drs_on_race_lap) {
+        game.custom.enable_drs = true;
+      }
       if (ship.custom.lap_start != null)
       {
         var time = (game.step-ship.custom.lap_start-1+extra_bit)/60 ;
@@ -889,6 +901,28 @@ var checkShip = function(ship, index) {
       ship.custom.lap_start = game.step-1+extra_bit ;
     }
     ship.custom.current_checkpoint = (ship.custom.current_checkpoint+1)%checkpoints.length;
+    ship.custom.troll_step = 0;
+    if (ship.custom.troll) {
+      ship.custom.troll = false;
+      color_echo_with_name("No longer troll:", index + 1, ship.name, "LimeGreen");
+    }
+  } else {
+    if (!ship.custom.afk && ship.custom.afk_seconds < troll_afk_timeout) {
+      if (!ship.custom.troll) {
+        if (!ship.custom.troll_step) {
+          ship.custom.troll_step = troll_timeout * 60 + game.step;
+        } else if (game.step >= ship.custom.troll_step) {
+          ship.custom.troll = true;
+          color_echo_with_name("Troll:", index + 1, ship.name, "Tomato");
+        }
+      }
+    } else {
+      ship.custom.troll_step = 0;
+      if (ship.custom.troll) {
+        ship.custom.troll = false;
+        color_echo_with_name("Troll is gonna AFK:", index + 1, ship.name, "Orange");
+      }
+    }
   }
 
   if (ship.custom.lap_start != null)
@@ -1028,8 +1062,8 @@ var updateScoreboard = function(game) {
   }
 } ; // if (game.custom.status == "qualification" && ship.x > -290 && ship.x < -270 && ship.y > -330 && Ship.y < -310) {
 
-var updateShipInfo = function(ship,game) { 
-  if (game.custom.status == "qualification" && ship.x > -290 && ship.x < -270 && ship.y > -330 && ship.y < -310) {
+var updateShipInfo = function(ship, game) {
+  if (game.custom.status == "qualification" && ship.x > SpawnX-10 && ship.x < SpawnX+10 && ship.y > SpawnY-10 && ship.y < SpawnY+10) {
     if (!ship.custom.button_visible) {
       ship.setUIComponent(change_button);
       ship.custom.button_visible = true;
@@ -1039,8 +1073,7 @@ var updateShipInfo = function(ship,game) {
     ship.setUIComponent(change_button_hidden);
     ship.custom.button_visible = false;
   }
-  
-} ;  
+};
 
 
 // game steps:
@@ -1051,6 +1084,8 @@ var manageGame = function(game,second) {
     game.custom.status_time = second+qualification_duration ;
     var t = game.custom.status_time-second ;
     game.custom.qualification_time = t ;
+    game.custom.enable_drs = true;
+    game.custom.enable_pitlane = false;
   }
   switch (game.custom.status)
   {
@@ -1060,7 +1095,7 @@ var manageGame = function(game,second) {
       if (t == 0)
       {
         game.custom.status = "race_start" ;
-        game.custom.status_time = second+10 ;
+        game.custom.status_time = second+race_start_delay;
         race_info.components[0].value = "Prepare for race!";
         //game.setOpen(false) ;
         game.setUIComponent(race_info);
@@ -1076,7 +1111,7 @@ var manageGame = function(game,second) {
 
     case "race_start":
       t = Math.max(0,game.custom.status_time-second) ;
-      if (t<=3)
+      if (t<=race_start_timer)
       {
         countdown.components[0].value = t ;
         countdown.visible = true ;
@@ -1214,9 +1249,8 @@ var manageGame = function(game,second) {
   }
 } ;
 
-var changeShip = function (ship,game) {
-   if (game.custom.status == "qualification" && ship.x > SpawnX-10 && ship.x < SpawnX+10 && ship.y > SpawnY-10 && ship.y < SpawnY+10) 
-   {
+var changeShip = function(ship,game) {
+  if (game.custom.status == "qualification" && ship.x > SpawnX-10 && ship.x < SpawnX+10 && ship.y > SpawnY-10 && ship.y < SpawnY+10) {
     if (ship.type == 106) {
       ship.set({type:101})
     } else {
@@ -1228,8 +1262,7 @@ var changeShip = function (ship,game) {
     } else {
       ship.set({type:ship.type+1})
     }
-   }
-  
+  } 
   else if (ship.custom.button_visible) {
     ship.setUIComponent(change_button_hidden);
     ship.custom.button_visible = false;
@@ -1247,6 +1280,11 @@ var spawnShip = function(ship)
 
 
 var createStartingGrid = function(game) {
+  afk_check.disable(true);
+  game.custom.enable_drs = false;
+  if (enable_pitlane) {
+    game.custom.enable_pitlane = true;
+  }
   var x = 309 ;// Pole position ship X coordinate
 
   for (var i=0;i<game.ships.length;i++)
@@ -1285,6 +1323,7 @@ var startRace = function(game) {
   }
   checkpoint_times = [] ;
   game.custom.lap_record = null;
+  afk_check.enable(true);
 }
 
 this.tick = function(game) {
@@ -1306,29 +1345,32 @@ this.tick = function(game) {
     {
       var ship = game.ships[i];
       ship.setUIComponent(scoreboard);
-      updateShipInfo(ship,game);
+      updateShipInfo(ship, game);
     }
   }
-  //Collectibles
-  
-  if (game.step%605 == 0) {
-    //DRSZONE 1
-    game.addCollectible({code:90,x:30,y:5});
-    game.addCollectible({code:90,x:60,y:5});
-    game.addCollectible({code:90,x:90,y:5});
-    game.addCollectible({code:90,x:120,y:5});
-    game.addCollectible({code:90,x:150,y:5});
-    //DRSZONE 2
-    game.addCollectible({code:90,x:205,y:180});
-    game.addCollectible({code:90,x:235,y:180});
-    game.addCollectible({code:90,x:265,y:180});
-    game.addCollectible({code:90,x:295,y:180});
-    game.addCollectible({code:90,x:325,y:180});
-  } 
+
+  // Collectibles
+
+  // DRS
+  if (game.custom.enable_drs) {
+    if (game.step%605 == 0) {
+      //DRSZONE 1
+      game.addCollectible({code:90,x:30,y:5});
+      game.addCollectible({code:90,x:60,y:5});
+      game.addCollectible({code:90,x:90,y:5});
+      game.addCollectible({code:90,x:120,y:5});
+      game.addCollectible({code:90,x:150,y:5});
+      //DRSZONE 2
+      game.addCollectible({code:90,x:205,y:180});
+      game.addCollectible({code:90,x:235,y:180});
+      game.addCollectible({code:90,x:265,y:180});
+      game.addCollectible({code:90,x:295,y:180});
+      game.addCollectible({code:90,x:325,y:180});
+    }
+  }
+
   // PitLane
- 
-  
-  if (vehicle_type != spr && game.custom.status != "qualification") {
+  if (game.custom.enable_pitlane) {
     if (game.step%1350 == 0) {  
       game.addCollectible({code:20,x:Wx+30,y:Wy});
       game.addCollectible({code:11,x:Wx+20,y:Wy});
@@ -1342,30 +1384,17 @@ this.tick = function(game) {
       game.addCollectible({code:21,x:Wx-30,y:Wy});
     }
   }  
-} ;
+};
 
 
 this.event = function(event,game) {
-  switch (event.name)
-  {
-    case "ship_spawned":
-      if (event.ship != null)
-      {
-        spawnShip(event.ship) ;
-      }
-      break ;
-  }
-  
-  
-  switch (event.name) 
-  {
+  switch (event.name) {
     case "ui_component_clicked":
-    var ship = event.ship;
-    var component = event.id;
-    if (component == "change") {
-      changeShip(ship,game);
-    }
-    break;
+      var ship = event.ship;
+      var component = event.id;
+      if (component == "change") {
+        changeShip(ship, game);
+      }
+      break;
   }
-
-} ;
+};
