@@ -6,8 +6,8 @@ var qualification_duration = 40;
 var race_laps = 16;
 var positions = ["1st","2nd","3rd"] ; // For messages
 var collectibles = 1 ; // Value is not used in any way
-var time_after_race = 50 ;
-
+var time_after_race = 50 ;  
+ 
 var race_start_delay = 11;
 var race_start_timer = 3;
 
@@ -30,6 +30,7 @@ var vehicle_type = end; //(end - endurance, spr - sprint)
 
 var enable_drs_on_race_lap = 3;
 var enable_pitlane = vehicle_type != spr;
+
 
 var SpawnX = 340; var SpawnY = -380; var StartX = 35; var StartY = -285;
 /*
