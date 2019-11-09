@@ -31,6 +31,7 @@ var vehicle_type = end; //(end - endurance, spr - sprint)
 var enable_drs_on_race_lap = 3;
 var enable_pitlane = vehicle_type != spr;
 
+
 var SpawnX = 160; var SpawnY = -100; var StartX = 330; var StartY = 5;
 /*
 game.ships[0].set({x:250,y:-95}); -start
