@@ -1,9 +1,9 @@
-// 5th SRC weekend,
+// 6th SRC weekend,
 // All changes is used, relevant at the time of the weekend on this track
 // Special thanks to Notus, for testing and code review
 
-var qualification_duration = 800;
-var race_laps = 10;
+var qualification_duration = 600;
+var race_laps = 12;
 var positions = ["1st","2nd","3rd"]; // For messages
 var collectibles = 1 ; // Value is not used in any way
 var time_after_race = 100 ;
@@ -21,8 +21,8 @@ var en = "endurance race" ;
 var fp = "free practice";
 
 
-var map_name_type = sp; // "sp" or "en"
-var vehicle_type = spr; // end - endurance, spr - sprint
+var map_name_type = en; // "sp" or "en"
+var vehicle_type = end; // end - endurance, spr - sprint
 // endurance ships have 2 weapon/booster slots, sprint - only 1
 // sprint ships have better booster speed 
 // choose "end" to unlock weapons 
@@ -1642,6 +1642,8 @@ var createStartingGrid = function(game) {
   if (enable_pitlane) {
     game.custom.enable_pitlane = true;
   }
+  
+  
   var x = 59 ;// Pole position ship X coordinate
 
   for (var i=0;i<game.ships.length;i++)
@@ -1661,7 +1663,7 @@ var createStartingGrid = function(game) {
     {
       ship.set({x:x,y:-295,vx:0,vy:0,idle:true,angle:180,generator:0}) ;
     }
-    x = Math.min(59,x+10) ; // (Pole position coordinate, x+10 / x-10 distance with position down)
+    x = Math.max(59,x+10); // (Pole position coordinate, x+10 / x-10 distance with position down)
   }
 }
 
