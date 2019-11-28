@@ -270,8 +270,8 @@ var track1 = {
 
 checkpoints: [
   {x:StartX,y:StartY,direction:0,width:150}, // Start / finish line
-  {x:Sector2X,y:Sector2Y,direction:Math.PI*0.5,width:80}, // the 1st third end of track (2nd sector beginning)
-  {x:Sector3X,y:Sector3Y,direction:Math.PI,width:100} // the 2nd third end of track (3rd sector beginning)
+  {x:Sector2X,y:Sector2Y,direction:Math.PI,width:80}, // the 1st third end of track (2nd sector beginning)
+  {x:Sector3X,y:Sector3Y,direction:Math.PI*0.5,width:100} // the 2nd third end of track (3rd sector beginning)
  ]
 } ;
 
