@@ -382,8 +382,8 @@ var arrow = {
 var ShipsGallery = {
   id: "ShipsGallery",
   obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
-  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/racingships.png",
-  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/racingships.png"
+  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/racingships2.png",
+  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/racingships2.png"
 } ;
 
 game.setObject({
@@ -397,8 +397,8 @@ game.setObject({
 var AboutMod = {
   id: "AboutMod",
   obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
-  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/aboutmod.png",
-  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/aboutmod.png"
+  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/aboutmod2.png",
+  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/aboutmod2.png"
 } ;
 
 game.setObject({
