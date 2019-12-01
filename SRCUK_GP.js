@@ -2,7 +2,7 @@
 // All changes is used, relevant at the time of the weekend on this track
 // Special thanks to Notus, for testing and code review
 
-var qualification_duration = 6700;
+var qualification_duration = 120;
 var race_laps = 10;
 var positions = ["1st","2nd","3rd"]; // For messages
 var collectibles = 1 ; // Value is not used in any way
@@ -21,8 +21,8 @@ var en = "endurance race" ;
 var fp = "free practice";
 
 
-var map_name_type = en; // "sp" or "en"
-var vehicle_type = end; // end - endurance, spr - sprint
+var map_name_type = sp; // "sp" or "en"
+var vehicle_type = spr; // end - endurance, spr - sprint
 // endurance ships have 2 weapon/booster slots, sprint - only 1
 // sprint ships have better booster speed 
 // choose "end" to unlock weapons 
@@ -31,7 +31,7 @@ var vehicle_type = end; // end - endurance, spr - sprint
 var enable_drs_on_race_lap = 3;
 var enable_pitlane = vehicle_type != spr;
 
-var SpawnX = -355; var SpawnY = 200; var StartX = -195; var StartY = 155;
+var SpawnX = -355; var SpawnY = 200; var StartX = -175; var StartY = 155;
 /*
 game.ships[0].set({x:250,y:-95}); -start
 game.ships[0].set({x:400,y:-160}); -spawn
@@ -42,7 +42,7 @@ S2 : 155,-115
 S3 : 65, -335
 */ 
 
-var Sector1X = StartX+50; var Sector1Y = StartY;
+var Sector1X = StartX+35; var Sector1Y = StartY;
 var Sector2X = 190; var Sector2Y = 135;
 var Sector3X = 175;  var Sector3Y = -175;
 
@@ -210,12 +210,12 @@ var track1 = {
 "99     999         99999         D 99     9999999999999999999999999    9999999999999999     99999999\n"+ //1
 "9     999   999999999999999999999  99     9999999999999999999999999    99999999999999999     9999999\n"+ //2
 "9    999   99999999999999999999999  9     9999999999999999999999999    999999999999999999    9999999\n"+ //3
-"9UUUU999DD999999999999999999999999  99     999999999999999999999999    999999999999999999DDDD9999999\n"+ //4
-"9    99  9999999999999999999999999  99DDDDD999999999999999999999999    999999999999999999    9999999\n"+ //5
-"99    99  999999999999999999999999  99     999999999999999999999999    99999999999999999     9999999\n"+ //6
+"9UUUU999UU999999999999999999999999  99     999999999999999999999999    999999999999999999DDDD9999999\n"+ //4
+"9    99889999999999999999999999999  99DDDDD999999999999999999999999    999999999999999999    9999999\n"+ //5
+"99    9988999999999999999999999999  99     999999999999999999999999    99999999999999999     9999999\n"+ //6
 "999     Q 999999999999999999999999  99      99999999999999999999999U H 9999999999999999      9999999\n"+ //7
-"999       999999999999999999999999 Q     R      9999999999999999999    999999999999999      99999999\n"+ //8
-"999999 L  999999999999999999999999                  999999999999999    99999999999999      999999999\n"+ //9
+"999       999999999999999999999999 Q 8   R      9999999999999999999    999999999999999      99999999\n"+ //8
+"999999 L  999999999999999999999999  88              999999999999999    99999999999999      999999999\n"+ //9
 "999999 L  9999999999999999999999999999999               99999999999    9999999999999      9999999999\n"+    //50
 "999999    99999999999999999999999999999999999               9999999    999999999999      99999999999\n"+ //1
 "999999    999999999999999999999999999999999999999      R     999999    99999999999  DD  999999999999\n"+ //2
@@ -1629,7 +1629,7 @@ var createStartingGrid = function(game) {
   }
   
   
-  var x = 59 ;// Pole position ship X coordinate
+  var x = -198 ;// Pole position ship X coordinate
 
   for (var i=0;i<game.ships.length;i++)
   {
@@ -1642,13 +1642,13 @@ var createStartingGrid = function(game) {
     ship.custom.checkpoint_delta = 0 ;
     if (i%2 ==0)
     {
-      ship.set({x:x,y:-275,vx:0,vy:0,idle:true,angle:180,generator:0}) ;
+      ship.set({x:x,y:145,vx:0,vy:0,idle:true,angle:0,generator:0}) ;
     }
     else
     {
-      ship.set({x:x,y:-295,vx:0,vy:0,idle:true,angle:180,generator:0}) ;
+      ship.set({x:x,y:165,vx:0,vy:0,idle:true,angle:0,generator:0}) ;
     }
-    x = Math.max(59,x+10); // (Pole position coordinate, x+10 / x-10 distance with position down)
+    x = Math.min(-198,x-10); // (Pole position coordinate, x+10 / x-10 distance with position down)
   }
 }
 
