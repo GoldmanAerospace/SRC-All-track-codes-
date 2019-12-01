@@ -1628,7 +1628,7 @@ var createStartingGrid = function(game) {
   }
   
   
-  var x = -200 ;// Pole position ship X coordinate
+  var x = -198 ;// Pole position ship X coordinate
 
   for (var i=0;i<game.ships.length;i++)
   {
@@ -1647,7 +1647,7 @@ var createStartingGrid = function(game) {
     {
       ship.set({x:x,y:165,vx:0,vy:0,idle:true,angle:0,generator:0}) ;
     }
-    x = Math.min(-200,x-10); // (Pole position coordinate, x+10 / x-10 distance with position down)
+    x = Math.min(-198,x-10); // (Pole position coordinate, x+10 / x-10 distance with position down)
   }
 }
 
