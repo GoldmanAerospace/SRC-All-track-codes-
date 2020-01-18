@@ -414,8 +414,8 @@ game.setObject({
 var TrackInfo = {
   id: "TrackInfo",
   obj: "https://starblast.data.neuronality.com/mods/objects/plane.obj",
-  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/abouttrackUSA.png",
-  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/abouttrackUSA.png"
+  diffuse: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/abouttrackITA.png",
+  emissive: "https://raw.githubusercontent.com/mrGoldmanus/RACING-/master/abouttrackITA.png"
 } ;
 
 game.setObject({
