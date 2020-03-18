@@ -187,7 +187,7 @@ var Camera2_192 = '{"name":"Camera2","level":1.9,"model":2,"size":0.1,"zoom":0.1
 
 var spectators = {
   Camera1_191,
-  Camera2_192,
+  Camera2_192, 
 };
 
 var spectators_level = 1.9;
