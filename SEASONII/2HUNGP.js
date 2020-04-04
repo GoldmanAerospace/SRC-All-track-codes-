@@ -13,7 +13,7 @@ var rotate_tracks = false;
 var show_championship_table = false;
 var championship_points = [10,8,6,4,3,2,1];
 
-var season_race_number = 4;
+var season_race_number = 5;
 var max_players = 18;
 
 var qualification_duration = 900;
