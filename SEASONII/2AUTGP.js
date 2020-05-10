@@ -299,7 +299,7 @@ var AutGP = {
     y1: -275,
     y2: -295,
     x1: -1,
-    next_x: x => Math.max(-199, x - 10),
+    next_x: x => Math.min(159, x + 10),
   },
 };
 
