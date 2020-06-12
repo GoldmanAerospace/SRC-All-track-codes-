@@ -13,14 +13,14 @@ var rotate_tracks = true;
 var show_championship_table = true;
 var championship_points = [10,8,6,5,4,3,2,1];
 
-var season_race_number = 4;
+var season_race_number = 1;
 var max_players = 16;
 
 var qualification_duration = 180; // 180 for public event
 var race_laps = 4; //4 for public event
 var race_start_delay = 11;
 var race_start_countdown = 6;
-var race_close_time = 20; //20 for public event
+var race_close_time = 25; //25 for public event
 
 var set_end_times = function() {
   if (rotate_tracks) {
@@ -303,8 +303,9 @@ var ChiGP = {
 "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
   checkpoints: [
     {x:-200,y:-45,direction:Math.PI*0.5,width:100}, // Start / finish line
-    {x:185,y:100,direction:0,width:100}, // the 1st third end of track (2nd sector beginning)
-    {x:185,y:-170,direction:0,width:120} // the 2nd third end of track (3rd sector beginning)
+    {x:185,y:100,direction:0,width:100}, 
+    {x:185,y:-170,direction:0,width:120},
+    {x:0,y:-255,direction:Math.PI,width:120} 
   ],
   SpawnX: -360,
   SpawnY: -160,
