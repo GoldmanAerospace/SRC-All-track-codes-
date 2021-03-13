@@ -9,7 +9,7 @@ Modding space version -> Season2 / Public event n.2(MS)
 
 # How to change track, or other settings? 
 
-In modding, after you inserted the code, click Ctrl+F. In the field, paste "var tracks = ". Find the array tracks, and change the first track to the one you need.
+In modding, after you inserted the code, click Ctrl+F. In the field, paste "var tracks = ". Find the array "tracks", and change the first track to the one you need.
 
 All other mod setting you can find in the first hundred lines of code. 
 
