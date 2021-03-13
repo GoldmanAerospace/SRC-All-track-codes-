@@ -1,5 +1,15 @@
 # How to find last version?
 
-Now last tracks available in "season II" folder. There you can see quite playable versions with the current tracks. 
+Season 4 code for league events hosts -> Season 4 / S4 for champioship
 
-Public event, which was in game recently, also here, file "Public Event n.2". It includes 5 tracks, and most optimized version to explore a code, test, practice
+Season 4 code for practice -> Season 4 / S4 for practice
+
+Modding space version -> Season2 / Public event n.2(MS)
+
+
+# How to change track, or other settings? 
+
+In modding, after you inserted the code, click Ctrl+F. In the field, paste "var tracks = ". Find the array tracks, and change the first track to the one you need.
+
+All other mod setting you can find in the first hundred lines of code. 
+
