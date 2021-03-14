@@ -454,7 +454,7 @@ var MonGP = {
   starting_grid: {
     x1: -395,
     x2: -405,
-    y1: -60,
+    y1: 62,
     next_y: y => Math.max(-98, y - 10),
   },
   drs: [
