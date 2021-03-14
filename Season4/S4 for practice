@@ -579,8 +579,8 @@ var CanGP = {
   SpawnY: -90,
   Spawn_direction: -45,
   starting_grid: {
-    y1: -5,
-    y2: -15,
+    y1: 5,
+    y2: -5,
     x1: -321,
     next_x: x => Math.min(151, x + 10),
   },
