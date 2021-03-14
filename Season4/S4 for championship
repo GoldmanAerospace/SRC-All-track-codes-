@@ -442,7 +442,7 @@ var MonGP = {
 "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
   checkpoints: [
     {x:-400,y:85,direction:Math.PI*0.5,width:90}, // Start / finish line
-    {x:250,y:405,direction:0,width:50}, 
+    {x:250,y:405,direction:Math.PI*1.5,width:50}, 
     {x:270,y:355,direction:0,width:50}, 
     {x:325,y:460,direction:0,width:50}, 
     {x:-270,y:-40,direction:Math.PI*1.5,width:50},
